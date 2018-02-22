@@ -33,6 +33,14 @@
         </dependency>
         <dependency>
             <groupId>org.gephi</groupId>
+            <artifactId>appearance-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.gephi</groupId>
+            <artifactId>preview-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.gephi</groupId>
             <artifactId>io-exporter-api</artifactId>
         </dependency>
         <dependency>

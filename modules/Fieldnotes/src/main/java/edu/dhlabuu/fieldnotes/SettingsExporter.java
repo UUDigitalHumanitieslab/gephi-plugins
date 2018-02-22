@@ -19,14 +19,10 @@ import org.gephi.layout.api.LayoutController;
 import org.gephi.layout.api.LayoutModel;
 import org.gephi.layout.spi.Layout;
 import org.gephi.layout.spi.LayoutProperty;
-import org.gephi.graph.api.AttributeUtils;
-import org.gephi.graph.api.Column;
-import org.gephi.graph.api.Edge;
-import org.gephi.graph.api.Graph;
-import org.gephi.graph.api.GraphController;
-import org.gephi.graph.api.GraphModel;
-import org.gephi.graph.api.Node;
-import org.gephi.graph.api.Table;
+import org.gephi.appearance.api.*;
+import org.gephi.appearance.spi.*;
+import org.gephi.preview.api.*;
+import org.gephi.graph.api.*;
 import org.gephi.io.exporter.spi.ByteExporter;
 import org.gephi.io.exporter.spi.GraphExporter;
 import org.gephi.project.api.Workspace;
@@ -79,6 +75,10 @@ public class SettingsExporter implements GraphExporter, ByteExporter, LongTask
         FilterModel filterModel = filterController.getModel();
         LayoutController layoutController = Lookup.getDefault().lookup(LayoutController.class);
         LayoutModel layoutModel = layoutController.getModel();
+        AppearanceController appearanceController = Lookup.getDefault().lookup(AppearanceController.class);
+        AppearanceModel appearanceModel = appearanceController.getModel();
+        PreviewController previewController = Lookup.getDefault().lookup(PreviewController.class);
+        PreviewModel previewModel = previewController.getModel();
 
         if (exportVisible)
         {
@@ -135,6 +135,19 @@ public class SettingsExporter implements GraphExporter, ByteExporter, LongTask
                     }
                 }
             }
+
+            PreviewProperty[] previewProperties = previewModel.getProperties().getProperties();
+            if (previewProperties.length > 0)
+            {
+                for (int i = 0; i < previewProperties.length; i++)
+                {
+                    // TODO: actually read property value
+                    PreviewProperty previewProperty = previewProperties[i];
+                    settings.put("Arrow size", PreviewProperty.ARROW_SIZE);
+                }
+            }
+
+            System.out.println(appearanceModel.getEdgeFunctions(graph)[0].getTransformer().toString());
 
             String timeLog = new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime());
             String filepath = "settings_" + timeLog + ".settings";
