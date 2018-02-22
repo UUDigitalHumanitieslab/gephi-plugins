@@ -110,7 +110,6 @@ public class SettingsExporter implements GraphExporter, ByteExporter, LongTask
                 Query query = queries[i];
                 if (query.getPropertiesCount() > 0)
                 {
-                    System.out.println("filter query: " + query.getName());
                     for (int j = 0; j < query.getPropertiesCount(); j++)
                     {
                         settings.put(query.getPropertyName(j), String.valueOf(query.getPropertyValue(j)));
@@ -127,7 +126,8 @@ public class SettingsExporter implements GraphExporter, ByteExporter, LongTask
                     for (int i = 0; i < layoutProperties.length; i++)
                     {
                         LayoutProperty layoutProperty = layoutProperties[i];
-                        String propertyName = "property0";//layoutProperty.getProperty().getDisplayName();
+                        String propertyName = "property0";
+                        //String propertyName = layoutProperty.getProperty().getDisplayName();
                         String propertyValue = "0";
                         settings.put(propertyName, propertyValue);
                     }
