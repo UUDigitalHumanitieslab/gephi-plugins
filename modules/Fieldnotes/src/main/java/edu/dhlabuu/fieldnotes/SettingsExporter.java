@@ -97,7 +97,7 @@ public class SettingsExporter implements GraphExporter, ByteExporter, LongTask
         try
         {
             String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime());
-            settings.put("isDirected", String.valueOf(graph.isDirected()));
+            settings.put("isDirectedGraph", String.valueOf(graph.isDirected()));
             settings.put("timeZone: ", String.valueOf(graph.getModel().getTimeZone()));
             settings.put("edgeCount: ", String.valueOf(graph.getEdgeCount()));
             settings.put("nodeCount: ", String.valueOf(graph.getNodeCount()));
@@ -108,6 +108,8 @@ public class SettingsExporter implements GraphExporter, ByteExporter, LongTask
             for (int i = 0; i < queries.length; i++)
             {
                 Query query = queries[i];
+                settings.put("filter " + String.valueOf(i), query.getName());
+
                 if (query.getPropertiesCount() > 0)
                 {
                     for (int j = 0; j < query.getPropertiesCount(); j++)
