@@ -71,15 +71,6 @@ public class SettingsExporter implements GraphExporter, ByteExporter, LongTask
         GraphModel model = graphController.getGraphModel(workspace);
         Graph graph;
 
-        FilterController filterController = Lookup.getDefault().lookup(FilterController.class);
-        FilterModel filterModel = filterController.getModel();
-        LayoutController layoutController = Lookup.getDefault().lookup(LayoutController.class);
-        LayoutModel layoutModel = layoutController.getModel();
-        AppearanceController appearanceController = Lookup.getDefault().lookup(AppearanceController.class);
-        AppearanceModel appearanceModel = appearanceController.getModel();
-        PreviewController previewController = Lookup.getDefault().lookup(PreviewController.class);
-        PreviewModel previewModel = previewController.getModel();
-
         if (exportVisible)
         {
             graph = model.getGraphVisible();
@@ -89,9 +80,16 @@ public class SettingsExporter implements GraphExporter, ByteExporter, LongTask
         }
         graph.readLock();
 
+        FilterController filterController = Lookup.getDefault().lookup(FilterController.class);
+        FilterModel filterModel = filterController.getModel();
+        LayoutController layoutController = Lookup.getDefault().lookup(LayoutController.class);
+        LayoutModel layoutModel = layoutController.getModel();
+        AppearanceController appearanceController = Lookup.getDefault().lookup(AppearanceController.class);
+        AppearanceModel appearanceModel = appearanceController.getModel();
+        PreviewController previewController = Lookup.getDefault().lookup(PreviewController.class);
+        PreviewModel previewModel = previewController.getModel();
 
         final Map<String, String> settings = new LinkedHashMap<String, String>();
-        //logger.log(Level.INFO, "isDirected: {0}", graph.isDirected());
 
         Progress.setDisplayName(ticket, getMessage("WritingSettingsFile"));
         try
@@ -104,37 +102,9 @@ public class SettingsExporter implements GraphExporter, ByteExporter, LongTask
             settings.put("attributeKeys: ", String.valueOf(graph.getAttributeKeys()));
 
             addFiltersToSettings(settings, filterModel);
-
-
-            Layout layout = layoutModel.getSelectedLayout();
-            if (layout != null)
-            {
-                LayoutProperty[] layoutProperties = layout.getProperties();
-                if (layoutProperties.length > 0)
-                {
-                    for (int i = 0; i < layoutProperties.length; i++)
-                    {
-                        LayoutProperty layoutProperty = layoutProperties[i];
-                        String propertyName = "property0";
-                        //String propertyName = layoutProperty.getProperty().getDisplayName();
-                        String propertyValue = "0";
-                        settings.put(propertyName, propertyValue);
-                    }
-                }
-            }
-
-            PreviewProperty[] previewProperties = previewModel.getProperties().getProperties();
-            if (previewProperties.length > 0)
-            {
-                for (int i = 0; i < previewProperties.length; i++)
-                {
-                    // TODO: actually read property value
-                    PreviewProperty previewProperty = previewProperties[i];
-                    settings.put("Arrow size", PreviewProperty.ARROW_SIZE);
-                }
-            }
-
-            System.out.println(appearanceModel.getEdgeFunctions(graph)[0].getTransformer().toString());
+            addLayoutToSettings(settings, layoutModel);
+            addAppearanceToSettings(settings, appearanceModel, graph);
+            addPreviewToSettings(settings, previewModel);
 
             String timeLog = new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime());
             String filepath = "settings_" + timeLog + ".settings";
@@ -172,6 +142,45 @@ public class SettingsExporter implements GraphExporter, ByteExporter, LongTask
                 {
                     settings.put(query.getPropertyName(j), String.valueOf(query.getPropertyValue(j)));
                 }
+            }
+        }
+    }
+
+    private void addLayoutToSettings(Map<String, String> settings, LayoutModel layoutModel)
+    {
+        Layout layout = layoutModel.getSelectedLayout();
+        if (layout != null)
+        {
+            LayoutProperty[] layoutProperties = layout.getProperties();
+            if (layoutProperties.length > 0)
+            {
+                for (int i = 0; i < layoutProperties.length; i++)
+                {
+                    LayoutProperty layoutProperty = layoutProperties[i];
+                    String propertyName = "property0";
+                    //String propertyName = layoutProperty.getProperty().getDisplayName();
+                    String propertyValue = "0";
+                    settings.put(propertyName, propertyValue);
+                }
+            }
+        }
+    }
+
+    private void addAppearanceToSettings(Map<String, String> settings, AppearanceModel appearanceModel, Graph graph)
+    {
+        System.out.println(appearanceModel.getEdgeFunctions(graph)[0].getTransformer().toString());
+    }
+
+    private void addPreviewToSettings(Map<String, String> settings, PreviewModel previewModel)
+    {
+        PreviewProperty[] previewProperties = previewModel.getProperties().getProperties();
+        if (previewProperties.length > 0)
+        {
+            for (int i = 0; i < previewProperties.length; i++)
+            {
+                // TODO: actually read property value
+                PreviewProperty previewProperty = previewProperties[i];
+                settings.put("Arrow size", PreviewProperty.ARROW_SIZE);
             }
         }
     }
