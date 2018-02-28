@@ -103,21 +103,8 @@ public class SettingsExporter implements GraphExporter, ByteExporter, LongTask
             settings.put("nodeCount: ", String.valueOf(graph.getNodeCount()));
             settings.put("attributeKeys: ", String.valueOf(graph.getAttributeKeys()));
 
-            Query[] queries = filterModel.getQueries();
+            addFiltersToSettings(settings, filterModel);
 
-            for (int i = 0; i < queries.length; i++)
-            {
-                Query query = queries[i];
-                settings.put("filter " + String.valueOf(i), query.getName());
-
-                if (query.getPropertiesCount() > 0)
-                {
-                    for (int j = 0; j < query.getPropertiesCount(); j++)
-                    {
-                        settings.put(query.getPropertyName(j), String.valueOf(query.getPropertyValue(j)));
-                    }
-                }
-            }
 
             Layout layout = layoutModel.getSelectedLayout();
             if (layout != null)
@@ -168,6 +155,25 @@ public class SettingsExporter implements GraphExporter, ByteExporter, LongTask
         }
         
         return true;
+    }
+
+    private void addFiltersToSettings(Map<String, String> settings, FilterModel filterModel)
+    {
+        Query[] queries = filterModel.getQueries();
+
+        for (int i = 0; i < queries.length; i++)
+        {
+            Query query = queries[i];
+            settings.put("filter " + String.valueOf(i), query.getName());
+
+            if (query.getPropertiesCount() > 0)
+            {
+                for (int j = 0; j < query.getPropertiesCount(); j++)
+                {
+                    settings.put(query.getPropertyName(j), String.valueOf(query.getPropertyValue(j)));
+                }
+            }
+        }
     }
 
     private void writeSettings(Map<String, String> settings, String filepath) throws IOException
