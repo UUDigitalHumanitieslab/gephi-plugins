@@ -90,6 +90,17 @@ public class SettingsExporter implements GraphExporter, ByteExporter, LongTask
         PreviewModel previewModel = previewController.getModel();
 
         final Map<String, String> settings = new LinkedHashMap<String, String>();
+        final Map<String, String> filterSettings = new LinkedHashMap<String, String>();
+        final Map<String, String> layoutSettings = new LinkedHashMap<String, String>();
+        final Map<String, String> appearanceSettings = new LinkedHashMap<String, String>();
+        final Map<String, String> previewSettings = new LinkedHashMap<String, String>();
+
+        LinkedHashMap<String, Map<String, String>> settingsList = new LinkedHashMap<String, Map<String, String>>();
+        settingsList.put("General settings", settings);
+        settingsList.put("Filter settings", filterSettings);
+        settingsList.put("Layout settings", layoutSettings);
+        settingsList.put("Appearance settings", appearanceSettings);
+        settingsList.put("Preview settings", previewSettings);
 
         Progress.setDisplayName(ticket, getMessage("WritingSettingsFile"));
         try
@@ -101,15 +112,15 @@ public class SettingsExporter implements GraphExporter, ByteExporter, LongTask
             settings.put("nodeCount: ", String.valueOf(graph.getNodeCount()));
             settings.put("attributeKeys: ", String.valueOf(graph.getAttributeKeys()));
 
-            addFiltersToSettings(settings, filterModel);
-            addLayoutToSettings(settings, layoutModel);
-            addAppearanceToSettings(settings, appearanceModel, graph);
-            addPreviewToSettings(settings, previewModel);
+            addFiltersToSettings(filterSettings, filterModel);
+            addLayoutToSettings(layoutSettings, layoutModel);
+            addAppearanceToSettings(appearanceSettings, appearanceModel, graph);
+            addPreviewToSettings(previewSettings, previewModel);
 
             String timeLog = new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime());
             String filepath = "settings_" + timeLog + ".settings";
 
-            writeSettings(settings, filepath);
+            writeSettings(settingsList, filepath);
             JOptionPane.showMessageDialog(null, getMessage("ExportCompleteMessage"),
                 getMessage("ExportCompleteTitle"), JOptionPane.INFORMATION_MESSAGE
             );
@@ -173,19 +184,21 @@ public class SettingsExporter implements GraphExporter, ByteExporter, LongTask
 
     private void addPreviewToSettings(Map<String, String> settings, PreviewModel previewModel)
     {
-        PreviewProperty[] previewProperties = previewModel.getProperties().getProperties();
-        if (previewProperties.length > 0)
+        PreviewProperties previewProperties = previewModel.getProperties();
+        PreviewProperty[] previewPropertiesList = previewModel.getProperties().getProperties();
+        if (previewPropertiesList.length > 0)
         {
-            for (int i = 0; i < previewProperties.length; i++)
+            for (int j = 0; j < previewPropertiesList.length; j++)
             {
-                // TODO: actually read property value
-                PreviewProperty previewProperty = previewProperties[i];
-                settings.put("Arrow size", PreviewProperty.ARROW_SIZE);
+                PreviewProperty previewProperty = previewPropertiesList[j];
+                String previewPropertyName = previewProperty.getName();
+                String previewPropertyValue = previewProperties.getValue(previewPropertyName).toString();
+                settings.put(previewPropertyName, previewPropertyValue);
             }
         }
     }
 
-    private void writeSettings(Map<String, String> settings, String filepath) throws IOException
+    private void writeSettings(LinkedHashMap<String, Map<String, String>> settingsList, String filepath) throws IOException
     {
         BufferedWriter writer = null;
         try {
@@ -193,12 +206,21 @@ public class SettingsExporter implements GraphExporter, ByteExporter, LongTask
 
             writer = new BufferedWriter(new FileWriter(file));
 
-            for (Map.Entry<String, String> entry : settings.entrySet())
+
+            for (Map.Entry<String, Map<String, String>> settingsEntry : settingsList.entrySet())
             {
-                String key = entry.getKey();
-                String value = entry.getValue();
-                writer.write(key + ": " + value);
+                String settingsType = settingsEntry.getKey();
+                Map<String, String> settings = settingsEntry.getValue();
+                writer.write(settingsType);
                 writer.newLine();
+
+                for (Map.Entry<String, String> entry : settings.entrySet())
+                {
+                    String key = entry.getKey();
+                    String value = entry.getValue();
+                    writer.write(key + ": " + value);
+                    writer.newLine();
+                }
             }
 
         } catch (Exception e)
