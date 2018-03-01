@@ -187,6 +187,16 @@ public class SettingsExporter implements GraphExporter, ByteExporter, LongTask
 
     private void addAppearanceToSettings(Map<String, String> settings, AppearanceModel appearanceModel, Graph graph)
     {
+        for (Node node : graph.getNodes())
+        {
+            String nodeColorLabel = String.format("%s color", node.getLabel());
+            String nodeColor = String.format("rgb:%f,%f,%f", node.r(), node.g(), node.b());
+            settings.put(nodeColorLabel, nodeColor);
+
+            String nodeSizeLabel = String.format("%s size", node.getLabel());
+            String nodeSize = String.valueOf(node.size());
+            settings.put(nodeSizeLabel, nodeSize);
+        }
         System.out.println(appearanceModel.getEdgeFunctions(graph)[0].getTransformer().toString());
     }
 
