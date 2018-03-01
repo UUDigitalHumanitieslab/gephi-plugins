@@ -236,6 +236,8 @@ public class SettingsExporter implements GraphExporter, ByteExporter, LongTask
             {
                 String settingsType = settingsEntry.getKey();
                 Map<String, String> settings = settingsEntry.getValue();
+                writer.write("------------------------------------------------------------------------------------------------------------------------");
+                writer.newLine();
                 writer.write(settingsType);
                 writer.newLine();
 
