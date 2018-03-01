@@ -21,7 +21,7 @@ public class SettingsExporterBuilder implements GraphFileExporterBuilder {
 
     @Override
     public FileType[] getFileTypes() {
-        return new FileType[]{new FileType(".settings", NbBundle.getMessage(SettingsExporterBuilder.class, "SettingsFile"))};
+        return new FileType[]{new FileType(".txt", NbBundle.getMessage(SettingsExporterBuilder.class, "SettingsFile"))};
     }
 
     @Override

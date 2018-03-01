@@ -118,7 +118,7 @@ public class SettingsExporter implements GraphExporter, ByteExporter, LongTask
             addPreviewToSettings(previewSettings, previewModel);
 
             String timeLog = new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime());
-            String filepath = "settings_" + timeLog + ".settings";
+            String filepath = "settings_" + timeLog + ".txt";
 
             writeSettings(settingsList, filepath);
             JOptionPane.showMessageDialog(null, getMessage("ExportCompleteMessage"),
@@ -171,6 +171,8 @@ public class SettingsExporter implements GraphExporter, ByteExporter, LongTask
                     String propertyName = "property0";
                     //String propertyName = layoutProperty.getProperty().getDisplayName();
                     String propertyValue = "0";
+                    //layoutProperty.getProperty().getValue().toString()
+                    //System.out.println(layoutProperty.getProperty().getValue().toString());
                     settings.put(propertyName, propertyValue);
                 }
             }
