@@ -21,6 +21,7 @@ import org.gephi.layout.spi.Layout;
 import org.gephi.layout.spi.LayoutProperty;
 import org.gephi.appearance.api.*;
 import org.gephi.appearance.spi.*;
+import org.gephi.statistics.api.*;
 import org.gephi.preview.api.*;
 import org.gephi.graph.api.*;
 import org.gephi.io.exporter.spi.ByteExporter;
@@ -86,6 +87,8 @@ public class SettingsExporter implements GraphExporter, ByteExporter, LongTask
         LayoutModel layoutModel = layoutController.getModel();
         AppearanceController appearanceController = Lookup.getDefault().lookup(AppearanceController.class);
         AppearanceModel appearanceModel = appearanceController.getModel();
+        StatisticsController statisticsController = Lookup.getDefault().lookup(StatisticsController.class);
+        StatisticsModel statisticsModel = statisticsController.getModel();
         PreviewController previewController = Lookup.getDefault().lookup(PreviewController.class);
         PreviewModel previewModel = previewController.getModel();
 
@@ -93,6 +96,7 @@ public class SettingsExporter implements GraphExporter, ByteExporter, LongTask
         final Map<String, String> filterSettings = new LinkedHashMap<String, String>();
         final Map<String, String> layoutSettings = new LinkedHashMap<String, String>();
         final Map<String, String> appearanceSettings = new LinkedHashMap<String, String>();
+        final Map<String, String> statisticsSettings = new LinkedHashMap<String, String>();
         final Map<String, String> previewSettings = new LinkedHashMap<String, String>();
 
         LinkedHashMap<String, Map<String, String>> settingsList = new LinkedHashMap<String, Map<String, String>>();
@@ -100,6 +104,7 @@ public class SettingsExporter implements GraphExporter, ByteExporter, LongTask
         settingsList.put("Filter settings", filterSettings);
         settingsList.put("Layout settings", layoutSettings);
         settingsList.put("Appearance settings", appearanceSettings);
+        settingsList.put("Statistics settings", statisticsSettings);
         settingsList.put("Preview settings", previewSettings);
 
         Progress.setDisplayName(ticket, getMessage("WritingSettingsFile"));
@@ -115,6 +120,7 @@ public class SettingsExporter implements GraphExporter, ByteExporter, LongTask
             addFiltersToSettings(filterSettings, filterModel);
             addLayoutToSettings(layoutSettings, layoutModel);
             addAppearanceToSettings(appearanceSettings, appearanceModel, graph);
+            addStatisticsToSettings(statisticsSettings, statisticsModel);
             addPreviewToSettings(previewSettings, previewModel);
 
             String timeLog = new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime());
@@ -182,6 +188,13 @@ public class SettingsExporter implements GraphExporter, ByteExporter, LongTask
     private void addAppearanceToSettings(Map<String, String> settings, AppearanceModel appearanceModel, Graph graph)
     {
         System.out.println(appearanceModel.getEdgeFunctions(graph)[0].getTransformer().toString());
+    }
+
+    private void addStatisticsToSettings(Map<String, String> settings, StatisticsModel statisticsModel)
+    {
+        String statisticsName = "statisticsModel";
+        String statisticsValue = statisticsModel.toString();
+        settings.put(statisticsName, statisticsValue);
     }
 
     private void addPreviewToSettings(Map<String, String> settings, PreviewModel previewModel)
