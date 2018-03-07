@@ -110,7 +110,7 @@ public class SettingsExporter implements GraphExporter, ByteExporter, LongTask
         Progress.setDisplayName(ticket, getMessage("WritingSettingsFile"));
         try
         {
-            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime());
+            String timeStamp = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss").format(Calendar.getInstance().getTime());
             settings.put("isDirectedGraph", String.valueOf(graph.isDirected()));
             settings.put("timeZone", String.valueOf(graph.getModel().getTimeZone()));
             settings.put("edgeCount", String.valueOf(graph.getEdgeCount()));
@@ -123,7 +123,7 @@ public class SettingsExporter implements GraphExporter, ByteExporter, LongTask
             addStatisticsToSettings(statisticsSettings, statisticsModel);
             addPreviewToSettings(previewSettings, previewModel);
 
-            String timeLog = new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime());
+            String timeLog = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss").format(Calendar.getInstance().getTime());
             String filepath = "settings_" + timeLog + ".txt";
 
             writeSettings(settingsList, filepath);
