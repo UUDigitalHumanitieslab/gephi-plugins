@@ -100,22 +100,22 @@ public class SettingsExporter implements GraphExporter, ByteExporter, LongTask
         final Map<String, String> previewSettings = new LinkedHashMap<String, String>();
 
         LinkedHashMap<String, Map<String, String>> settingsList = new LinkedHashMap<String, Map<String, String>>();
-        settingsList.put("General settings", settings);
-        settingsList.put("Filter settings", filterSettings);
-        settingsList.put("Layout settings", layoutSettings);
-        settingsList.put("Appearance settings", appearanceSettings);
-        settingsList.put("Statistics settings", statisticsSettings);
-        settingsList.put("Preview settings", previewSettings);
+        settingsList.put("## General settings", settings);
+        settingsList.put("## Filter settings", filterSettings);
+        settingsList.put("## Layout settings", layoutSettings);
+        settingsList.put("## Appearance settings", appearanceSettings);
+        settingsList.put("## Statistics settings", statisticsSettings);
+        settingsList.put("## Preview settings", previewSettings);
 
         Progress.setDisplayName(ticket, getMessage("WritingSettingsFile"));
         try
         {
             String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime());
             settings.put("isDirectedGraph", String.valueOf(graph.isDirected()));
-            settings.put("timeZone: ", String.valueOf(graph.getModel().getTimeZone()));
-            settings.put("edgeCount: ", String.valueOf(graph.getEdgeCount()));
-            settings.put("nodeCount: ", String.valueOf(graph.getNodeCount()));
-            settings.put("attributeKeys: ", String.valueOf(graph.getAttributeKeys()));
+            settings.put("timeZone", String.valueOf(graph.getModel().getTimeZone()));
+            settings.put("edgeCount", String.valueOf(graph.getEdgeCount()));
+            settings.put("nodeCount", String.valueOf(graph.getNodeCount()));
+            settings.put("attributeKeys", String.valueOf(graph.getAttributeKeys()));
 
             addFiltersToSettings(filterSettings, filterModel);
             addLayoutToSettings(layoutSettings, layoutModel);
@@ -151,7 +151,7 @@ public class SettingsExporter implements GraphExporter, ByteExporter, LongTask
         for (int i = 0; i < queries.length; i++)
         {
             Query query = queries[i];
-            settings.put("filter " + String.valueOf(i), query.getName());
+            settings.put("# filter " + String.valueOf(i), query.getName());
 
             if (query.getPropertiesCount() > 0)
             {

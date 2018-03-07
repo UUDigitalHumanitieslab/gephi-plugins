@@ -7,7 +7,7 @@ import org.openide.util.NbBundle;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
- * Builder for Export to Earth plugin.
+ * Builder for Fieldnotes settings exporter plugin.
  *
  * @author Jelmer van Nuss
  */
