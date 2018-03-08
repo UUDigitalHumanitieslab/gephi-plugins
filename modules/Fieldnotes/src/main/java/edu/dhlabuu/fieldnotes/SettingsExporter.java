@@ -23,6 +23,7 @@ import org.gephi.appearance.api.*;
 import org.gephi.appearance.spi.*;
 import org.gephi.statistics.api.*;
 import org.gephi.preview.api.*;
+import org.gephi.preview.types.*;
 import org.gephi.graph.api.*;
 import org.gephi.io.exporter.spi.ByteExporter;
 import org.gephi.io.exporter.spi.GraphExporter;
@@ -119,7 +120,7 @@ public class SettingsExporter implements GraphExporter, ByteExporter, LongTask
 
             addFiltersToSettings(filterSettings, filterModel);
             addLayoutToSettings(layoutSettings, layoutModel);
-            addAppearanceToSettings(appearanceSettings, appearanceModel, graph);
+            addAppearanceToSettings(appearanceSettings, appearanceModel, model, graph);
             addStatisticsToSettings(statisticsSettings, statisticsModel);
             addPreviewToSettings(previewSettings, previewModel);
 
@@ -185,18 +186,40 @@ public class SettingsExporter implements GraphExporter, ByteExporter, LongTask
         }
     }
 
-    private void addAppearanceToSettings(Map<String, String> settings, AppearanceModel appearanceModel, Graph graph)
+    private static Column[] getColumns(Table table)
+    {
+        Column[] columns = new Column[table.countColumns()];
+
+        for (int i = 0; i < columns.length; i++)
+        {
+            columns[i] = table.getColumn(i);
+        }
+
+        return columns;
+    }
+
+    private void addAppearanceToSettings(Map<String, String> settings, AppearanceModel appearanceModel, GraphModel graphModel, Graph graph)
     {
         for (Node node : graph.getNodes())
         {
             String nodeColorLabel = String.format("%s color", node.getLabel());
             String nodeColor = String.format("rgb:%f,%f,%f", node.r(), node.g(), node.b());
-            settings.put(nodeColorLabel, nodeColor);
+            //settings.put(nodeColorLabel, nodeColor);
 
             String nodeSizeLabel = String.format("%s size", node.getLabel());
             String nodeSize = String.valueOf(node.size());
-            settings.put(nodeSizeLabel, nodeSize);
+            //settings.put(nodeSizeLabel, nodeSize);
         }
+        Table table = graphModel.getNodeTable();
+        Column[] columns = getColumns(table);
+        Column column = columns[0];
+        System.out.println(column.getTitle());
+        System.out.println(column.toString());
+        Partition edgePartition = appearanceModel.getEdgePartition(graph, column);
+        System.out.println(edgePartition.toString());
+        String edgePartitionColor = edgePartition.getColor(edgePartition.getValues().iterator().next()).toString();
+        System.out.println(edgePartitionColor);
+        settings.put("edgePartitionColor", edgePartitionColor);
         System.out.println(appearanceModel.getEdgeFunctions(graph)[0].getTransformer().toString());
     }
 
@@ -217,7 +240,15 @@ public class SettingsExporter implements GraphExporter, ByteExporter, LongTask
             {
                 PreviewProperty previewProperty = previewPropertiesList[j];
                 String previewPropertyName = previewProperty.getName();
-                String previewPropertyValue = previewProperties.getValue(previewPropertyName).toString();
+                String previewPropertyValue = previewProperty.getValue().toString();
+                try {
+                    // TODO: How to extract color from property?
+                    previewPropertyValue = previewProperties.getColorValue(previewProperty.getName()).toString();
+                }
+                catch (Exception e)
+                {
+
+                }
                 settings.put(previewPropertyName, previewPropertyValue);
             }
         }
