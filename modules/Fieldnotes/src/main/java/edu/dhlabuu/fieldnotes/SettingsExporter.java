@@ -112,7 +112,6 @@ public class SettingsExporter implements GraphExporter, ByteExporter, LongTask {
         Progress.setDisplayName(ticket, getMessage("WritingSettingsFile"));
         try {
             settings.put("isDirectedGraph", String.valueOf(graph.isDirected()));
-            settings.put("timeZone", String.valueOf(graph.getModel().getTimeZone()));
             settings.put("edgeCount", String.valueOf(graph.getEdgeCount()));
             settings.put("nodeCount", String.valueOf(graph.getNodeCount()));
 
@@ -173,11 +172,10 @@ public class SettingsExporter implements GraphExporter, ByteExporter, LongTask {
             if (layoutProperties.length > 0) {
                 for (int i = 0; i < layoutProperties.length; i++) {
                     LayoutProperty layoutProperty = layoutProperties[i];
-                    String propertyName = "property0";
+                    // Canonical name is structured as "[layoutName].[propertyName].name", so take the second element.
+                    String propertyName = layoutProperty.getCanonicalName().split("\\.")[1];
                     //String propertyName = layoutProperty.getProperty().getDisplayName();
                     String propertyValue = "0";
-                    //System.out.println(layoutProperty.getProperty().getValue().toString());
-                    //layoutProperty.getProperty().getValue().toString()
                     //System.out.println(layoutProperty.getProperty().getValue().toString());
                     settings.put(propertyName, propertyValue);
                 }
