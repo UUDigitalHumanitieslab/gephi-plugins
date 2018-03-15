@@ -40,8 +40,7 @@ import org.openide.util.NbBundle;
  *
  * @author Jelmer van Nuss
  */
-public class SettingsExporter implements GraphExporter, ByteExporter, LongTask
-{
+public class SettingsExporter implements GraphExporter, ByteExporter, LongTask {
 
     private Logger logger = Logger.getLogger("");
     private boolean exportVisible;
@@ -65,32 +64,33 @@ public class SettingsExporter implements GraphExporter, ByteExporter, LongTask
     }
 
     @Override
-    public boolean execute()
-    {
+    public boolean execute() {
         ticket.setDisplayName(getMessage("EvaluatingGraph"));
         Progress.start(ticket);
-        
+
         GraphController graphController = Lookup.getDefault().lookup(GraphController.class);
         GraphModel model = graphController.getGraphModel(workspace);
         Graph graph;
 
-        if (exportVisible)
-        {
+        if (exportVisible) {
             graph = model.getGraphVisible();
-        } else
-        {
+        } else {
             graph = model.getGraph();
         }
         graph.readLock();
 
         FilterController filterController = Lookup.getDefault().lookup(FilterController.class);
         FilterModel filterModel = filterController.getModel();
+
         LayoutController layoutController = Lookup.getDefault().lookup(LayoutController.class);
         LayoutModel layoutModel = layoutController.getModel();
+
         AppearanceController appearanceController = Lookup.getDefault().lookup(AppearanceController.class);
         AppearanceModel appearanceModel = appearanceController.getModel();
+
         StatisticsController statisticsController = Lookup.getDefault().lookup(StatisticsController.class);
         StatisticsModel statisticsModel = statisticsController.getModel();
+
         PreviewController previewController = Lookup.getDefault().lookup(PreviewController.class);
         PreviewModel previewModel = previewController.getModel();
 
@@ -110,8 +110,7 @@ public class SettingsExporter implements GraphExporter, ByteExporter, LongTask
         settingsList.put("## Preview settings", previewSettings);
 
         Progress.setDisplayName(ticket, getMessage("WritingSettingsFile"));
-        try
-        {
+        try {
             settings.put("isDirectedGraph", String.valueOf(graph.isDirected()));
             settings.put("timeZone", String.valueOf(graph.getModel().getTimeZone()));
             settings.put("edgeCount", String.valueOf(graph.getEdgeCount()));
@@ -128,62 +127,50 @@ public class SettingsExporter implements GraphExporter, ByteExporter, LongTask
 
             // Export the full graph.
             ExportController ec = Lookup.getDefault().lookup(ExportController.class);
-            try
-            {
+            try {
                 ec.exportFile(new File("graph_" + timeStamp + ".gexf"));
-            } catch (IOException ex)
-            {
+            } catch (IOException ex) {
                 ex.printStackTrace();
             }
 
             // Export the graph settings.
             writeSettings(settingsList, filepath);
             JOptionPane.showMessageDialog(null, getMessage("ExportCompleteMessage"),
-                getMessage("ExportCompleteTitle"), JOptionPane.INFORMATION_MESSAGE
+                    getMessage("ExportCompleteTitle"), JOptionPane.INFORMATION_MESSAGE
             );
-        } catch (IOException ex)
-        {
+        } catch (IOException ex) {
             Logger.getLogger(SettingsExporter.class.getName()).log(Level.SEVERE, null, ex);
             JOptionPane.showMessageDialog(null, getMessage("ExportSaveErrorMessage"),
                     getMessage("ExportSaveErrorTitle"), JOptionPane.ERROR_MESSAGE
             );
-        } finally
-        {
+        } finally {
             Progress.finish(ticket);
         }
-        
+
         return true;
     }
 
-    private void addFiltersToSettings(Map<String, String> settings, FilterModel filterModel)
-    {
+    private void addFiltersToSettings(Map<String, String> settings, FilterModel filterModel) {
         Query[] queries = filterModel.getQueries();
 
-        for (int i = 0; i < queries.length; i++)
-        {
+        for (int i = 0; i < queries.length; i++) {
             Query query = queries[i];
             settings.put("# filter " + String.valueOf(i), query.getName());
 
-            if (query.getPropertiesCount() > 0)
-            {
-                for (int j = 0; j < query.getPropertiesCount(); j++)
-                {
+            if (query.getPropertiesCount() > 0) {
+                for (int j = 0; j < query.getPropertiesCount(); j++) {
                     settings.put(query.getPropertyName(j), String.valueOf(query.getPropertyValue(j)));
                 }
             }
         }
     }
 
-    private void addLayoutToSettings(Map<String, String> settings, LayoutModel layoutModel)
-    {
+    private void addLayoutToSettings(Map<String, String> settings, LayoutModel layoutModel) {
         Layout layout = layoutModel.getSelectedLayout();
-        if (layout != null)
-        {
+        if (layout != null) {
             LayoutProperty[] layoutProperties = layout.getProperties();
-            if (layoutProperties.length > 0)
-            {
-                for (int i = 0; i < layoutProperties.length; i++)
-                {
+            if (layoutProperties.length > 0) {
+                for (int i = 0; i < layoutProperties.length; i++) {
                     LayoutProperty layoutProperty = layoutProperties[i];
                     String propertyName = "property0";
                     //String propertyName = layoutProperty.getProperty().getDisplayName();
@@ -196,20 +183,17 @@ public class SettingsExporter implements GraphExporter, ByteExporter, LongTask
         }
     }
 
-    private static Column[] getColumns(Table table)
-    {
+    private static Column[] getColumns(Table table) {
         Column[] columns = new Column[table.countColumns()];
 
-        for (int i = 0; i < columns.length; i++)
-        {
+        for (int i = 0; i < columns.length; i++) {
             columns[i] = table.getColumn(i);
         }
 
         return columns;
     }
 
-    private void addAppearanceToSettings(Map<String, String> settings, AppearanceModel appearanceModel, GraphModel graphModel, Graph graph)
-    {
+    private void addAppearanceToSettings(Map<String, String> settings, AppearanceModel appearanceModel, GraphModel graphModel, Graph graph) {
         // These appearance settings should already be in the corresponding .gexf file.
 //        for (Node node : graph.getNodes())
 //        {
@@ -224,43 +208,35 @@ public class SettingsExporter implements GraphExporter, ByteExporter, LongTask
         Table table = graphModel.getEdgeTable();
         Column[] columns = getColumns(table);
         Column column = columns[0];
-        try
-        {
+        try {
             Partition edgePartition = appearanceModel.getEdgePartition(graph, column);
             System.out.println(edgePartition.toString());
             System.out.println(edgePartition.size());
             String edgePartitionColor = edgePartition.getColor(edgePartition.getValues().iterator().next()).toString();
             System.out.println(edgePartitionColor);
             settings.put("edgePartitionColor", edgePartitionColor);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
 
         }
 //        System.out.println(appearanceModel.getEdgeFunctions(graph)[0].getTransformer().toString());
     }
 
-    private void addStatisticsToSettings(Map<String, String> settings, StatisticsModel statisticsModel)
-    {
+    private void addStatisticsToSettings(Map<String, String> settings, StatisticsModel statisticsModel) {
         String statisticsName = "statisticsModel";
         String statisticsValue = statisticsModel.toString();
         settings.put(statisticsName, statisticsValue);
     }
 
-    private void addPreviewToSettings(Map<String, String> settings, PreviewModel previewModel)
-    {
+    private void addPreviewToSettings(Map<String, String> settings, PreviewModel previewModel) {
         PreviewProperties previewProperties = previewModel.getProperties();
         PreviewProperty[] previewPropertiesList = previewModel.getProperties().getProperties();
-        if (previewPropertiesList.length > 0)
-        {
-            for (int j = 0; j < previewPropertiesList.length; j++)
-            {
+        if (previewPropertiesList.length > 0) {
+            for (int j = 0; j < previewPropertiesList.length; j++) {
                 PreviewProperty previewProperty = previewPropertiesList[j];
                 String previewPropertyName = previewProperty.getName();
 
                 // Correct a typo that exists in Gephi.
-                if (previewPropertyName == "node.label.proportinalSize")
-                {
+                if (previewPropertyName == "node.label.proportinalSize") {
                     previewPropertyName = "node.label.proportionalSize";
                 }
 
@@ -268,9 +244,7 @@ public class SettingsExporter implements GraphExporter, ByteExporter, LongTask
                 try {
                     // TODO: How to extract color from property?
                     previewPropertyValue = previewProperties.getColorValue(previewProperty.getName()).toString();
-                }
-                catch (Exception e)
-                {
+                } catch (Exception e) {
 
                 }
                 settings.put(previewPropertyName, previewPropertyValue);
@@ -278,8 +252,7 @@ public class SettingsExporter implements GraphExporter, ByteExporter, LongTask
         }
     }
 
-    private void writeSettings(LinkedHashMap<String, Map<String, String>> settingsList, String filepath) throws IOException
-    {
+    private void writeSettings(LinkedHashMap<String, Map<String, String>> settingsList, String filepath) throws IOException {
         BufferedWriter writer = null;
         try {
             File file = new File(filepath);
@@ -287,8 +260,7 @@ public class SettingsExporter implements GraphExporter, ByteExporter, LongTask
             writer = new BufferedWriter(new FileWriter(file));
 
 
-            for (Map.Entry<String, Map<String, String>> settingsEntry : settingsList.entrySet())
-            {
+            for (Map.Entry<String, Map<String, String>> settingsEntry : settingsList.entrySet()) {
                 String settingsType = settingsEntry.getKey();
                 Map<String, String> settings = settingsEntry.getValue();
                 writer.write("------------------------------------------------------------------------------------------------------------------------");
@@ -296,8 +268,7 @@ public class SettingsExporter implements GraphExporter, ByteExporter, LongTask
                 writer.write(settingsType);
                 writer.newLine();
 
-                for (Map.Entry<String, String> entry : settings.entrySet())
-                {
+                for (Map.Entry<String, String> entry : settings.entrySet()) {
                     String key = entry.getKey();
                     String value = entry.getValue();
                     writer.write(key + ": " + value);
@@ -305,16 +276,12 @@ public class SettingsExporter implements GraphExporter, ByteExporter, LongTask
                 }
             }
 
-        } catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
-        } finally
-        {
-            try
-            {
+        } finally {
+            try {
                 writer.close();
-            } catch (Exception e)
-            {
+            } catch (Exception e) {
             }
         }
     }
