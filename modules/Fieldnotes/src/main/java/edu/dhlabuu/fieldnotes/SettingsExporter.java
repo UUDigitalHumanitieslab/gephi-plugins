@@ -25,6 +25,7 @@ import org.gephi.statistics.api.*;
 import org.gephi.preview.api.*;
 import org.gephi.preview.types.*;
 import org.gephi.graph.api.*;
+import org.gephi.io.exporter.api.*;
 import org.gephi.io.exporter.spi.ByteExporter;
 import org.gephi.io.exporter.spi.GraphExporter;
 import org.gephi.project.api.Workspace;
@@ -111,12 +112,10 @@ public class SettingsExporter implements GraphExporter, ByteExporter, LongTask
         Progress.setDisplayName(ticket, getMessage("WritingSettingsFile"));
         try
         {
-            String timeStamp = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss").format(Calendar.getInstance().getTime());
             settings.put("isDirectedGraph", String.valueOf(graph.isDirected()));
             settings.put("timeZone", String.valueOf(graph.getModel().getTimeZone()));
             settings.put("edgeCount", String.valueOf(graph.getEdgeCount()));
             settings.put("nodeCount", String.valueOf(graph.getNodeCount()));
-            settings.put("attributeKeys", String.valueOf(graph.getAttributeKeys()));
 
             addFiltersToSettings(filterSettings, filterModel);
             addLayoutToSettings(layoutSettings, layoutModel);
@@ -124,9 +123,20 @@ public class SettingsExporter implements GraphExporter, ByteExporter, LongTask
             addStatisticsToSettings(statisticsSettings, statisticsModel);
             addPreviewToSettings(previewSettings, previewModel);
 
-            String timeLog = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss").format(Calendar.getInstance().getTime());
-            String filepath = "settings_" + timeLog + ".txt";
+            String timeStamp = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss").format(Calendar.getInstance().getTime());
+            String filepath = "settings_" + timeStamp + ".txt";
 
+            // Export the full graph.
+            ExportController ec = Lookup.getDefault().lookup(ExportController.class);
+            try
+            {
+                ec.exportFile(new File("graph_" + timeStamp + ".gexf"));
+            } catch (IOException ex)
+            {
+                ex.printStackTrace();
+            }
+
+            // Export the graph settings.
             writeSettings(settingsList, filepath);
             JOptionPane.showMessageDialog(null, getMessage("ExportCompleteMessage"),
                 getMessage("ExportCompleteTitle"), JOptionPane.INFORMATION_MESSAGE
@@ -200,27 +210,34 @@ public class SettingsExporter implements GraphExporter, ByteExporter, LongTask
 
     private void addAppearanceToSettings(Map<String, String> settings, AppearanceModel appearanceModel, GraphModel graphModel, Graph graph)
     {
-        for (Node node : graph.getNodes())
-        {
-            String nodeColorLabel = String.format("%s color", node.getLabel());
-            String nodeColor = String.format("rgb:%f,%f,%f", node.r(), node.g(), node.b());
-            //settings.put(nodeColorLabel, nodeColor);
-
-            String nodeSizeLabel = String.format("%s size", node.getLabel());
-            String nodeSize = String.valueOf(node.size());
-            //settings.put(nodeSizeLabel, nodeSize);
-        }
-        Table table = graphModel.getNodeTable();
+        // These appearance settings should already be in the corresponding .gexf file.
+//        for (Node node : graph.getNodes())
+//        {
+//            String nodeColorLabel = String.format("%s color", node.getLabel());
+//            String nodeColor = String.format("rgb:%f,%f,%f", node.r(), node.g(), node.b());
+//            settings.put(nodeColorLabel, nodeColor);
+//
+//            String nodeSizeLabel = String.format("%s size", node.getLabel());
+//            String nodeSize = String.valueOf(node.size());
+//            settings.put(nodeSizeLabel, nodeSize);
+//        }
+        Table table = graphModel.getEdgeTable();
         Column[] columns = getColumns(table);
         Column column = columns[0];
-        System.out.println(column.getTitle());
-        System.out.println(column.toString());
-        Partition edgePartition = appearanceModel.getEdgePartition(graph, column);
-        System.out.println(edgePartition.toString());
-        String edgePartitionColor = edgePartition.getColor(edgePartition.getValues().iterator().next()).toString();
-        System.out.println(edgePartitionColor);
-        settings.put("edgePartitionColor", edgePartitionColor);
-        System.out.println(appearanceModel.getEdgeFunctions(graph)[0].getTransformer().toString());
+        try
+        {
+            Partition edgePartition = appearanceModel.getEdgePartition(graph, column);
+            System.out.println(edgePartition.toString());
+            System.out.println(edgePartition.size());
+            String edgePartitionColor = edgePartition.getColor(edgePartition.getValues().iterator().next()).toString();
+            System.out.println(edgePartitionColor);
+            settings.put("edgePartitionColor", edgePartitionColor);
+        }
+        catch (Exception e)
+        {
+
+        }
+//        System.out.println(appearanceModel.getEdgeFunctions(graph)[0].getTransformer().toString());
     }
 
     private void addStatisticsToSettings(Map<String, String> settings, StatisticsModel statisticsModel)
@@ -240,6 +257,13 @@ public class SettingsExporter implements GraphExporter, ByteExporter, LongTask
             {
                 PreviewProperty previewProperty = previewPropertiesList[j];
                 String previewPropertyName = previewProperty.getName();
+
+                // Correct a typo that exists in Gephi.
+                if (previewPropertyName == "node.label.proportinalSize")
+                {
+                    previewPropertyName = "node.label.proportionalSize";
+                }
+
                 String previewPropertyValue = previewProperty.getValue().toString();
                 try {
                     // TODO: How to extract color from property?
