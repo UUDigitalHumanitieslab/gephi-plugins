@@ -168,6 +168,7 @@ public class SettingsExporter implements GraphExporter, ByteExporter, LongTask {
     private void addLayoutToSettings(Map<String, String> settings, LayoutModel layoutModel) {
         Layout layout = layoutModel.getSelectedLayout();
         if (layout != null) {
+            settings.put("# layout", layout.getBuilder().getName());
             LayoutProperty[] layoutProperties = layout.getProperties();
             if (layoutProperties.length > 0) {
                 for (int i = 0; i < layoutProperties.length; i++) {
@@ -175,6 +176,7 @@ public class SettingsExporter implements GraphExporter, ByteExporter, LongTask {
                     String propertyName = "property0";
                     //String propertyName = layoutProperty.getProperty().getDisplayName();
                     String propertyValue = "0";
+                    //System.out.println(layoutProperty.getProperty().getValue().toString());
                     //layoutProperty.getProperty().getValue().toString()
                     //System.out.println(layoutProperty.getProperty().getValue().toString());
                     settings.put(propertyName, propertyValue);
