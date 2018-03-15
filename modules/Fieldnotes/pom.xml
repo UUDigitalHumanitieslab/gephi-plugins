@@ -78,10 +78,10 @@
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>nbm-maven-plugin</artifactId>
                 <configuration>
-                    <author>Dave Shepard</author>
-                    <sourceCodeUrl>http://github.com/shepdl/gephi-plugins/tree/export-to-earth</sourceCodeUrl>
-                    <licenseName>3-clause BSD</licenseName>
-                    <licenseFile>bsd-3clause-license.txt</licenseFile>
+                    <author>Jelmer van Nuss (Digital Humanities Lab UU)</author>
+                    <sourceCodeUrl>https://github.com/UUDigitalHumanitieslab/gephi-plugins/tree/fieldnotes</sourceCodeUrl>
+                    <licenseName></licenseName>
+                    <licenseFile></licenseFile>
                     <publicPackages>
                         
                     </publicPackages>
