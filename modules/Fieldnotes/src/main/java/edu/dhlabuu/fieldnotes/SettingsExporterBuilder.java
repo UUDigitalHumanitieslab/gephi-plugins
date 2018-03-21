@@ -14,17 +14,14 @@ import org.openide.util.lookup.ServiceProvider;
 @ServiceProvider(service = GraphFileExporterBuilder.class)
 public class SettingsExporterBuilder implements GraphFileExporterBuilder {
 
-    @Override
     public GraphExporter buildExporter() {
         return new SettingsExporter();
     }
 
-    @Override
     public FileType[] getFileTypes() {
         return new FileType[]{new FileType(".txt", NbBundle.getMessage(SettingsExporterBuilder.class, "SettingsFile"))};
     }
 
-    @Override
     public String getName() {
         return NbBundle.getMessage(SettingsExporterBuilder.class, "SettingsFileExport");
     }
