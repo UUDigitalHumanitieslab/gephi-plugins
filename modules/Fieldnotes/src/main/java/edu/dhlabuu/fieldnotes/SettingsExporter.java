@@ -165,6 +165,7 @@ public class SettingsExporter implements GraphExporter, ByteExporter, LongTask {
     }
 
     private void addLayoutToSettings(Map<String, String> settings, LayoutModel layoutModel) {
+        // Layout is from .spi not .api, so cannot get to values?
         Layout layout = layoutModel.getSelectedLayout();
         if (layout != null) {
             settings.put("# layout", layout.getBuilder().getName());
