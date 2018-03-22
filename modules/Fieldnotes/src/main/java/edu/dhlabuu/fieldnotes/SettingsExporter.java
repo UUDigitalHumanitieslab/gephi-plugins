@@ -173,7 +173,7 @@ public class SettingsExporter implements GraphExporter, ByteExporter, LongTask {
                     // Canonical name is structured as "[layoutName].[propertyName].name", so take the second element.
                     String propertyName = layoutProperty.getCanonicalName().split("\\.")[1];
                     //String propertyName = layoutProperty.getProperty().getDisplayName();
-                    String propertyValue = "0";
+                    String propertyValue = "Not extracted";
                     //System.out.println(layoutProperty.getProperty().getValue().toString());
                     settings.put(propertyName, propertyValue);
                 }
@@ -239,11 +239,23 @@ public class SettingsExporter implements GraphExporter, ByteExporter, LongTask {
                 }
 
                 String previewPropertyValue = previewProperty.getValue().toString();
-                try {
-                    // TODO: How to extract color from property?
-                    previewPropertyValue = previewProperties.getColorValue(previewProperty.getName()).toString();
-                } catch (Exception e) {
-
+                if (previewProperty.getType() == DependantColor.class)
+                {
+                    DependantColor dependantColor = DependantColor.class.cast(previewProperty.getValue());
+                    Color color = dependantColor.getCustomColor();
+                    previewPropertyValue = color.toString();
+                }
+                else if (previewProperty.getType() == DependantOriginalColor.class)
+                {
+                    DependantOriginalColor dependantOriginalColor = DependantOriginalColor.class.cast(previewProperty.getValue());
+                    Color color = dependantOriginalColor.getCustomColor();
+                    previewPropertyValue = color.toString();
+                }
+                else if (previewProperty.getType() == EdgeColor.class)
+                {
+                    EdgeColor edgeColor = EdgeColor.class.cast(previewProperty.getValue());
+                    Color color = edgeColor.getCustomColor();
+                    previewPropertyValue = color.toString();
                 }
                 settings.put(previewPropertyName, previewPropertyValue);
             }
