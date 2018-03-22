@@ -284,27 +284,22 @@ public class SettingsExporter implements GraphExporter, ByteExporter, LongTask {
         }
     }
 
-    @Override
     public void setWorkspace(Workspace wrkspc) {
         workspace = wrkspc;
     }
 
-    @Override
     public Workspace getWorkspace() {
         return workspace;
     }
 
-    @Override
     public boolean cancel() {
         return cancelled = true;
     }
 
-    @Override
     public void setProgressTicket(ProgressTicket pt) {
         ticket = pt;
     }
 
-    @Override
     public void setOutputStream(OutputStream out) {
         outputStream = out;
     }
