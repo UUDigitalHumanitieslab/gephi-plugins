@@ -53,17 +53,14 @@ public class SettingsExporter implements GraphExporter, ByteExporter, LongTask {
         return NbBundle.getMessage(SettingsExporter.class, resourceName);
     }
 
-    @Override
     public void setExportVisible(boolean bln) {
         exportVisible = bln;
     }
 
-    @Override
     public boolean isExportVisible() {
         return exportVisible;
     }
 
-    @Override
     public boolean execute() {
         ticket.setDisplayName(getMessage("EvaluatingGraph"));
         Progress.start(ticket);
