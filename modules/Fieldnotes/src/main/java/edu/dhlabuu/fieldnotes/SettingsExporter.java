@@ -102,7 +102,7 @@ public class SettingsExporter implements GraphExporter, ByteExporter, LongTask {
         settingsList.put("## General settings", settings);
         settingsList.put("## Filter settings", filterSettings);
         settingsList.put("## Layout settings", layoutSettings);
-        settingsList.put("## Appearance settings", appearanceSettings);
+        //settingsList.put("## Appearance settings", appearanceSettings);
         settingsList.put("## Statistics settings", statisticsSettings);
         settingsList.put("## Preview settings", previewSettings);
 
@@ -114,7 +114,7 @@ public class SettingsExporter implements GraphExporter, ByteExporter, LongTask {
 
             addFiltersToSettings(filterSettings, filterModel);
             addLayoutToSettings(layoutSettings, layoutModel);
-            addAppearanceToSettings(appearanceSettings, appearanceModel, model, graph);
+            //addAppearanceToSettings(appearanceSettings, appearanceModel, model, graph);
             addStatisticsToSettings(statisticsSettings, statisticsModel);
             addPreviewToSettings(previewSettings, previewModel);
 
@@ -193,30 +193,16 @@ public class SettingsExporter implements GraphExporter, ByteExporter, LongTask {
 
     private void addAppearanceToSettings(Map<String, String> settings, AppearanceModel appearanceModel, GraphModel graphModel, Graph graph) {
         // These appearance settings should already be in the corresponding .gexf file.
-//        for (Node node : graph.getNodes())
-//        {
-//            String nodeColorLabel = String.format("%s color", node.getLabel());
-//            String nodeColor = String.format("rgb:%f,%f,%f", node.r(), node.g(), node.b());
-//            settings.put(nodeColorLabel, nodeColor);
-//
-//            String nodeSizeLabel = String.format("%s size", node.getLabel());
-//            String nodeSize = String.valueOf(node.size());
-//            settings.put(nodeSizeLabel, nodeSize);
-//        }
-        Table table = graphModel.getEdgeTable();
-        Column[] columns = getColumns(table);
-        Column column = columns[0];
-        try {
-            Partition edgePartition = appearanceModel.getEdgePartition(graph, column);
-            System.out.println(edgePartition.toString());
-            System.out.println(edgePartition.size());
-            String edgePartitionColor = edgePartition.getColor(edgePartition.getValues().iterator().next()).toString();
-            System.out.println(edgePartitionColor);
-            settings.put("edgePartitionColor", edgePartitionColor);
-        } catch (Exception e) {
+        for (Node node : graph.getNodes())
+        {
+            String nodeColorLabel = String.format("%s color", node.getLabel());
+            String nodeColor = String.format("rgb:%f,%f,%f", node.r(), node.g(), node.b());
+            settings.put(nodeColorLabel, nodeColor);
 
+            String nodeSizeLabel = String.format("%s size", node.getLabel());
+            String nodeSize = String.valueOf(node.size());
+            settings.put(nodeSizeLabel, nodeSize);
         }
-//        System.out.println(appearanceModel.getEdgeFunctions(graph)[0].getTransformer().toString());
     }
 
     private void addStatisticsToSettings(Map<String, String> settings, StatisticsModel statisticsModel) {
