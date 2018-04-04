@@ -6,6 +6,12 @@ If you choose to build the project from this source, you can use the procedure a
 
 If you choose to use the prebuilt `nbm` package from this repository, open Gephi and `Tools > Plugins > Downloaded > Add plugins...` and then select the nbm file from your hard disk to install Gephi Fieldnotes.
 
+## Using Gephi Fieldnotes
+
+With a graph open in Gephi, and potential settings already set, go to `File > Export > Graph file...` and select the option `Settings File (*.txt)`.
+Doing so will produce a settings file called `settings_[year]-[month]-[day]_[hour]:[minutes]:[seconds].txt` and a graph export called `graph_[year]-[month]-[day]_[hour]:[minutes]:[seconds].gexf`.
+These two files are linked through their timestamp and together form a complete snapshot of the produced graph.
+
 ## What is Gephi Fieldnotes?
 
 A Gephi user can have the need to share his research procedure by sharing intermediate graphs and results.
