@@ -12,7 +12,7 @@ With a graph open in Gephi, and potential settings already set, go to `File > Ex
 Doing so will produce a settings file called `settings_[year]-[month]-[day]_[hour]:[minutes]:[seconds].txt` and a graph export called `graph_[year]-[month]-[day]_[hour]:[minutes]:[seconds].gexf`.
 These two files are linked through their timestamp and together form a complete snapshot of the produced graph.
 
-## What is Gephi Fieldnotes?
+## Structure of a Fieldnotes Settings file
 
 A Gephi user can have the need to share his research procedure by sharing intermediate graphs and results.
 Currently, there is no way of saving most settings that are available in Gephi.
