@@ -2,6 +2,10 @@
 
 ## Installation instructions
 
+If you choose to build the project from this source, you can use the procedure as defined in https://github.com/gephi/gephi-plugins
+
+If you choose to use the prebuilt `nbm` package from this repository, open Gephi and `Tools > Plugins > Downloaded > Add plugins...` and then select the nbm file from your hard disk to install Gephi Fieldnotes.
+
 ## What is Gephi Fieldnotes?
 
 A Gephi user can have the need to share his research procedure by sharing intermediate graphs and results.
