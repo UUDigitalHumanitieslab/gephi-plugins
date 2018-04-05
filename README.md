@@ -128,3 +128,17 @@ edge.label.outline.size: 0.0
 edge.label.outline.color: java.awt.Color[r=255,g=255,b=255]
 edge.label.outline.opacity: 80.0
 ```
+
+## Future adjustments
+
+### Reloading settings
+
+Reading the settings from Gephi and writing them to a settings file is shown to be possible.
+The other way around, that is, reading from a settings file and putting the settings in Gephi, should be possible as well.
+The settings file can become quite lengthy, especially with many filters applied or just the preview window by itself.
+The user would have to set all of these settings (or deliberately choose to ignore some) manually.
+Loading these settings automatically would be of added value.
+
+### Add missing settings if possible
+
+For now, the layout values and statistics windows are missing in the settings file.
