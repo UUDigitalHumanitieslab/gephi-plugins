@@ -49,6 +49,8 @@ public class SettingsExporter implements GraphExporter, ByteExporter, LongTask {
     private ProgressTicket ticket;
     // This is file selected/created by the user
     private OutputStream outputStream;
+    // Keep the graph here so we can close it on errors
+    private Graph graph;
 
     private String getMessage(String resourceName) {
         return NbBundle.getMessage(SettingsExporter.class, resourceName);
@@ -71,14 +73,13 @@ public class SettingsExporter implements GraphExporter, ByteExporter, LongTask {
         this.logMessage(Level.INFO, "Loading controllers and settings");
         GraphController graphController = Lookup.getDefault().lookup(GraphController.class);
         GraphModel model = graphController.getGraphModel(workspace);
-        Graph graph;
 
         if (exportVisible) {
-            graph = model.getGraphVisible();
+            this.graph = model.getGraphVisible();
         } else {
-            graph = model.getGraph();
+            this.graph = model.getGraph();
         }
-        graph.readLock();
+        this.graph.readLock();
 
         FilterController filterController = Lookup.getDefault().lookup(FilterController.class);
         FilterModel filterModel = filterController.getModel();
@@ -146,7 +147,7 @@ public class SettingsExporter implements GraphExporter, ByteExporter, LongTask {
         this.writeSummaryToOutput(fileExportedGraph.getPath(), fileExportedSettings);
         
         // Make sure the graph is unlocked, otherwise Gephi will go unresponsive
-        graph.readUnlock();
+        this.graph.readUnlock();
         Progress.finish(ticket);
         JOptionPane.showMessageDialog(null, getMessage("ExportCompleteMessage"),
                 getMessage("ExportCompleteTitle"), JOptionPane.INFORMATION_MESSAGE);
@@ -342,6 +343,7 @@ public class SettingsExporter implements GraphExporter, ByteExporter, LongTask {
     }
 
     private void handleError(Exception ex, String dialogTitle, String dialogMessage) {
+        this.graph.readUnlock();
         logError(ex);
 
         JOptionPane.showMessageDialog(null, dialogMessage, dialogTitle, JOptionPane.ERROR_MESSAGE);
