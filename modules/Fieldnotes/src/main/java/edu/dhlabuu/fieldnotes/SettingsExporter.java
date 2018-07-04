@@ -63,9 +63,12 @@ public class SettingsExporter implements GraphExporter, ByteExporter, LongTask {
     }
 
     public boolean execute() {
+        this.logMessage(Level.INFO, "Start");
+
         ticket.setDisplayName(getMessage("EvaluatingGraph"));
         Progress.start(ticket);
 
+        this.logMessage(Level.INFO, "Loading controllers and settings");
         GraphController graphController = Lookup.getDefault().lookup(GraphController.class);
         GraphModel model = graphController.getGraphModel(workspace);
         Graph graph;
@@ -108,41 +111,48 @@ public class SettingsExporter implements GraphExporter, ByteExporter, LongTask {
         settingsList.put("## Preview settings", previewSettings);
 
         Progress.setDisplayName(ticket, getMessage("WritingSettingsFile"));
+       
+        settings.put("isDirectedGraph", String.valueOf(graph.isDirected()));
+        settings.put("edgeCount", String.valueOf(graph.getEdgeCount()));
+        settings.put("nodeCount", String.valueOf(graph.getNodeCount()));
+
+        addFiltersToSettings(filterSettings, filterModel);
+        addLayoutToSettings(layoutSettings, layoutModel);
+        //addAppearanceToSettings(appearanceSettings, appearanceModel, model, graph);
+        addStatisticsToSettings(statisticsSettings, statisticsModel);
+        addPreviewToSettings(previewSettings, previewModel);
+        this.logMessage(Level.INFO, "Done loading controllers and settings. Starting export");
+
+        // Export Settings (to two files)
+        String timeStamp = new SimpleDateFormat("yyyy-MM-dd_HH_mm_ss").format(Calendar.getInstance().getTime());
+        String fileExportedSettings = new File(System.getProperty("user.dir"), "settings_" + timeStamp + ".txt").getPath();
+        File fileExportedGraph = new File(System.getProperty("user.dir"), "graph_" + timeStamp + ".gexf");
+
+        // Export the full graph.
+        ExportController ec = Lookup.getDefault().lookup(ExportController.class);
         try {
-            settings.put("isDirectedGraph", String.valueOf(graph.isDirected()));
-            settings.put("edgeCount", String.valueOf(graph.getEdgeCount()));
-            settings.put("nodeCount", String.valueOf(graph.getNodeCount()));
-
-            addFiltersToSettings(filterSettings, filterModel);
-            addLayoutToSettings(layoutSettings, layoutModel);
-            //addAppearanceToSettings(appearanceSettings, appearanceModel, model, graph);
-            addStatisticsToSettings(statisticsSettings, statisticsModel);
-            addPreviewToSettings(previewSettings, previewModel);
-
-            String timeStamp = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss").format(Calendar.getInstance().getTime());
-            String filepath = "settings_" + timeStamp + ".txt";
-
-            // Export the full graph.
-            ExportController ec = Lookup.getDefault().lookup(ExportController.class);
-            try {
-                ec.exportFile(new File("graph_" + timeStamp + ".gexf"));
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
-
-            // Export the graph settings.
-            writeSettings(settingsList, filepath);
-            JOptionPane.showMessageDialog(null, getMessage("ExportCompleteMessage"),
-                    getMessage("ExportCompleteTitle"), JOptionPane.INFORMATION_MESSAGE
-            );
+            this.logMessage(Level.INFO, String.format("Starting export of graph to '%s'", fileExportedGraph.getPath()));
+            ec.exportFile(new File("graph_" + timeStamp + ".gexf"));
+            this.logMessage(Level.INFO, String.format("Succesfully exported to '%s'", fileExportedGraph.getPath()));
         } catch (IOException ex) {
-            Logger.getLogger(SettingsExporter.class.getName()).log(Level.SEVERE, null, ex);
-            JOptionPane.showMessageDialog(null, getMessage("ExportSaveErrorMessage"),
-                    getMessage("ExportSaveErrorTitle"), JOptionPane.ERROR_MESSAGE
-            );
-        } finally {
-            Progress.finish(ticket);
+            this.handleError(ex, getMessage("ExportSaveErrorTitle"), getMessage("ExportSaveErrorMessage"));
         }
+
+        // Export the settings.
+        this.logMessage(Level.INFO, String.format("Attempting to write settings to '%s'", fileExportedSettings));
+        writeSettings(settingsList, fileExportedSettings);
+
+        // Write message to outputstream (i.e. the file created by the user)
+        this.writeSummaryToOutput(fileExportedGraph.getPath(), fileExportedSettings);
+        
+        // Make sure the graph is unlocked, otherwise Gephi will go unresponsive
+        graph.readUnlock();
+        Progress.finish(ticket);
+        JOptionPane.showMessageDialog(null, getMessage("ExportCompleteMessage"),
+                getMessage("ExportCompleteTitle"), JOptionPane.INFORMATION_MESSAGE);
+        
+        this.logMessage(Level.INFO, String.format("Succesfully wrote settings to '%s'", fileExportedSettings));
+        this.logMessage(Level.INFO, "Done");
 
         return true;
     }
@@ -273,12 +283,13 @@ public class SettingsExporter implements GraphExporter, ByteExporter, LongTask {
                 }
             }
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception ex) {
+            this.handleError(ex, getMessage("ExportSaveErrorTitle"), getMessage("ExportSaveErrorMessage"));
         } finally {
             try {
                 writer.close();
-            } catch (Exception e) {
+            } catch (Exception ex) {
+                this.handleError(ex, getMessage("ExportSaveErrorTitle"), getMessage("ExportSaveErrorMessage"));
             }
         }
     }
@@ -301,5 +312,47 @@ public class SettingsExporter implements GraphExporter, ByteExporter, LongTask {
 
     public void setOutputStream(OutputStream out) {
         outputStream = out;
+    }
+
+    private void writeSummaryToOutput(String exportFileGraph, String exportFileSettings) {
+        try {
+            String message = "Thank you for using the Fieldnotes plugin! Your settings were saved in two files:" +  
+                System.lineSeparator() +
+                System.lineSeparator() +  
+                String.format("'%s' contains the graph settings", exportFileGraph) +
+                System.lineSeparator() +
+                System.lineSeparator() +              
+                String.format("'%s' contains various other settings.", exportFileSettings) +
+                System.lineSeparator() +
+                System.lineSeparator() + 
+                "Read more about these files and their content at https://github.com/UUDigitalHumanitieslab/gephi-plugins/tree/fieldnotes" +
+                System.lineSeparator() + 
+                System.lineSeparator() + 
+                System.lineSeparator() +
+                "UTRECHT DATA SCHOOL" +
+                System.lineSeparator() +
+                "DIGITAL HUMANITIES LAB" +
+                System.lineSeparator() +
+                "Utrecht University 2018";
+            
+            this.outputStream.write(message.getBytes(), 0, message.length());        
+        } catch (IOException ex) {
+            this.handleError(ex, "Error while writing to file", ex.getMessage());
+        }  
+    }
+
+    private void handleError(Exception ex, String dialogTitle, String dialogMessage) {
+        logError(ex);
+
+        JOptionPane.showMessageDialog(null, dialogMessage, dialogTitle, JOptionPane.ERROR_MESSAGE);
+    }
+
+    private void logError(Exception ex) {
+        this.logMessage(Level.SEVERE, ex.getMessage());
+        ex.printStackTrace();
+    }
+
+    private void logMessage(Level level, String message) {
+        Logger.getLogger(SettingsExporter.class.getName()).log(level, message);
     }
 }
