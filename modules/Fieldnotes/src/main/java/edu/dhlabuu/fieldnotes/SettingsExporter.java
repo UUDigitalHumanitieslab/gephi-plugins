@@ -259,7 +259,7 @@ public class SettingsExporter implements GraphExporter, ByteExporter, LongTask {
         }
     }
 
-    private void writeSettings(LinkedHashMap<String, Map<String, String>> settingsList, String filepath) throws IOException {
+    private void writeSettings(LinkedHashMap<String, Map<String, String>> settingsList, String filepath) {
         BufferedWriter writer = null;
         try {
             File file = new File(filepath);
