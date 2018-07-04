@@ -38,15 +38,16 @@ import org.openide.util.NbBundle;
 /**
  * Exports Gephi graphs to Settings files.
  *
- * @author Jelmer van Nuss
+ * @author Jelmer van Nuss and Alex Hebing, 2018, Digital Humanities Lab, Utrecht University
+ * 
  */
 public class SettingsExporter implements GraphExporter, ByteExporter, LongTask {
-
-    private Logger logger = Logger.getLogger("");
     private boolean exportVisible;
     private Workspace workspace;
-    private boolean cancelled;
+    private boolean cancelled;    
+    // Used to set progressbar/message
     private ProgressTicket ticket;
+    // This is file selected/created by the user
     private OutputStream outputStream;
 
     private String getMessage(String resourceName) {
