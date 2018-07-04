@@ -14,7 +14,7 @@
 
     <groupId>edu.dhlabuu</groupId>
     <artifactId>fieldnotes</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
     <packaging>nbm</packaging>
 
     <name>Fieldnotes</name>
@@ -83,7 +83,7 @@
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>nbm-maven-plugin</artifactId>
                 <configuration>
-                    <author>Jelmer van Nuss (Digital Humanities Lab UU)</author>
+                    <author>Jelmer van Nuss and Alex Hebing (Digital Humanities Lab UU)</author>
                     <sourceCodeUrl>https://github.com/UUDigitalHumanitieslab/gephi-plugins/tree/fieldnotes</sourceCodeUrl>
                     <licenseName></licenseName>
                     <licenseFile></licenseFile>
