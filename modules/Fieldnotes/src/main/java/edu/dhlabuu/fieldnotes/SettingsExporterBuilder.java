@@ -9,7 +9,7 @@ import org.openide.util.lookup.ServiceProvider;
 /**
  * Builder for Fieldnotes settings exporter plugin.
  *
- * @author Jelmer van Nuss
+ * @author Jelmer van Nuss, 2018, Digital Humanities Lab, Utrecht University
  */
 @ServiceProvider(service = GraphFileExporterBuilder.class)
 public class SettingsExporterBuilder implements GraphFileExporterBuilder {
