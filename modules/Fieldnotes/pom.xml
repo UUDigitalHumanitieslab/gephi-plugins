@@ -7,9 +7,14 @@
         <version>0.9.2</version>
     </parent>
 
+    <properties>
+      <maven.compiler.source>1.6</maven.compiler.source>
+      <maven.compiler.target>1.6</maven.compiler.target>
+    </properties>
+
     <groupId>edu.dhlabuu</groupId>
     <artifactId>fieldnotes</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
     <packaging>nbm</packaging>
 
     <name>Fieldnotes</name>
