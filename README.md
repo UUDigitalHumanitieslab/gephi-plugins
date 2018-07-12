@@ -8,7 +8,7 @@ If you choose to use the prebuilt `nbm` package from this repository, open Gephi
 
 ## Using Gephi Fieldnotes
 
-With a graph open in Gephi, and potential settings already set, go to `Plugins > Export Fieldnotes`. Choose a folder where you want to save the files with your current settings.
+With a graph open in Gephi, and potential settings already set, go to `Fieldnotes > Export`. Choose a folder where you want to save the files with your current settings.
 Note that write permissions are required for the plugin to work. After having selected a folder, the Fieldnotes plugin will produce a settings file called `settings_[year]-[month]-[day]_[hour]:[minutes]:[seconds].txt` and a graph export called `graph_[year]-[month]-[day]_[hour]:[minutes]:[seconds].gexf`.
 These two files are linked through their timestamp and together form a complete snapshot of the produced graph.
 

@@ -51,8 +51,8 @@ import org.gephi.io.exporter.api.ExportController;
  */
 @ActionID(category = "File", id = "org.gephi.desktop.filters.ExportFieldnotes")
 @ActionRegistration(displayName = "#CTL_ExportFieldnotes")
-@ActionReferences({ @ActionReference(path = "Menu/Plugins", position = 3333) })
-@Messages("CTL_ExportFieldnotes=Export Fieldnotes")
+@ActionReferences({ @ActionReference(path = "Menu/Fieldnotes", position = 3333) })
+@Messages("CTL_ExportFieldnotes=Export")
 public final class ExportFieldnotesAction implements ActionListener {
     // The path selected by the user in JFileChooserDialog
     private File selectedFolder;
@@ -72,9 +72,6 @@ public final class ExportFieldnotesAction implements ActionListener {
 
     private void handleFolderSelected() {
         this.logMessage(Level.INFO, "Folder selected");
-
-        // TODO: check write permissions
-
         this.logMessage(Level.INFO, "Loading controllers and settings");
 
         this.init();

@@ -14,7 +14,7 @@
 
     <groupId>edu.dhlabuu</groupId>
     <artifactId>fieldnotes</artifactId>
-    <version>1.1.0</version>
+    <version>1.1.1</version>
     <packaging>nbm</packaging>
 
     <name>Fieldnotes</name>
