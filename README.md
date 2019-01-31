@@ -1,5 +1,11 @@
 # Gephi Fieldnotes
 
+## About
+
+The Fieldnotes Plugin is the product of a collaboration between the [Datafied Society research platform](https://datafiedsociety.nl/) and the [Digital Humanities Lab](https://dig.hum.uu.nl/) (both Utrecht University). The intellectual foundation was laid by research conducted by the Datafied Society, which led to the practical framework that formed the basis for the latter programming work executed by the Digital Humanities Lab. See for relevant academic work: 
+- ['The Fieldnotes Plugin: Making Network Visualization in Gephi Accountable'](http://networkcultures.org/blog/publication/tod-29-good-data/). Wieringa, Van Geenen, Van Es & Van Nuss, 2019.
+
+
 ## Installation instructions
 
 If you choose to build the project from this source, you can use the procedure as defined in https://github.com/gephi/gephi-plugins
